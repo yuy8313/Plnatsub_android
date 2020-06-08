@@ -63,17 +63,15 @@ public class PlnatCarmer extends AppCompatActivity {
     private final  String TAG = getClass().getSimpleName();
     // server의 url을 적어준다
     private final String BASE_URL = "http://e437c9f55054.ngrok.io";
-//    private final String BASE_URL = "http://127.0.0.1:5000/";
-
+    //    private final String BASE_URL = "http://127.0.0.1:5000/";
+    Boolean album = false;
     private static final int REQUEST_IMAGE_CAPTURE = 672;
     private String imageFilePath;
     private Uri photoUri;
     Button btn_cature,first_detail_btn,second_detail_btn;
-    ImageView image_result;
-    EditText edit1,edit2,edit3,edit4;
-    String content;
-    float avg_temp, min_temp, max_temp, rain_fall;
+    ImageView image_result,imageViewId;
     String android_id, formatDate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,44 +87,65 @@ public class PlnatCarmer extends AppCompatActivity {
         first_detail_btn = findViewById(R.id.first_detail_btn);
         second_detail_btn = findViewById(R.id.second_detail_btn);
         image_result = findViewById(R.id.image_result);
-        edit1 = findViewById(R.id.edit1);
-        edit2 = findViewById(R.id.edit2);
-        edit3 = findViewById(R.id.edit3);
-        edit4 = findViewById(R.id.edit4);
+        imageViewId = findViewById(R.id.imageViewId);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            long now = System.currentTimeMillis();
+            Date date = new Date(now);
+            SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy.MM.ddHH.mm.ss");
+            formatDate = sdfNow.format(date);
 
+            android_id = android.provider.Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+
+            try {
+                photoFile = createImageFile();
+
+            } catch (IOException e) {
+
+            }
+
+            if (photoFile != null) {
+                photoUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName(), photoFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+
+
+            }
+        }
 
         initMyAPI(BASE_URL);
-        btn_cature.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                getplant();
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    File photoFile = null;
-                    long now = System.currentTimeMillis();
-                    Date date = new Date(now);
-                    SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy.MM.ddHH.mm.ss");
-                    formatDate = sdfNow.format(date);
-
-                    android_id = android.provider.Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-
-                    try {
-                        photoFile = createImageFile();
-
-                    } catch (IOException e) {
-
-                    }
-
-                    if (photoFile != null) {
-                        photoUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName(), photoFile);
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-
-
-                    }
-                }
-            }
-        });
+//        btn_cature.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                getplant();
+//                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                if (intent.resolveActivity(getPackageManager()) != null) {
+//                    File photoFile = null;
+//                    long now = System.currentTimeMillis();
+//                    Date date = new Date(now);
+//                    SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy.MM.ddHH.mm.ss");
+//                    formatDate = sdfNow.format(date);
+//
+//                    android_id = android.provider.Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+//
+//                    try {
+//                        photoFile = createImageFile();
+//
+//                    } catch (IOException e) {
+//
+//                    }
+//
+//                    if (photoFile != null) {
+//                        photoUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName(), photoFile);
+//                        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+//                        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+//
+//
+//                    }
+//                }
+//            }
+//        });
 
     }
 
@@ -177,9 +196,9 @@ public class PlnatCarmer extends AppCompatActivity {
                 exifDegree = 0;
 
             }
-
-            image_result.setImageBitmap(rotate(bitmap,exifDegree));
-
+            Uri myUri = Uri.parse(imageFilePath);
+            album =true;
+            image_result.setImageBitmap(rotate(bitmap,exifDegree));//사진나옴
 
         }
     }
@@ -211,37 +230,12 @@ public class PlnatCarmer extends AppCompatActivity {
 //        Log.i( "사진이 앨범에 저장되었습니다.",imageFilePath+"ㅇㅇ"+intent);
     }
 
-public void getversion(){
-        Call<List<AccountItem>> versionCall = mMyAPI.get_version();
-        versionCall.enqueue(new Callback<List<AccountItem>>() {
-            @Override
-            public void onResponse(Call<List<AccountItem>> call, Response<List<AccountItem>> response) {
-                if(response.isSuccessful()){
-                    List<AccountItem> versionList =response.body();
-                    Log.d(TAG,response.body().toString());
-                    String version_txt = "";
-                    for(AccountItem accountItem:versionList){
-                        version_txt +=accountItem.getPrice()+"\n";
-                    }
-                    mListTv.setText(version_txt);
-                }else{
-                    int StatusCode =response.code();
-                    Log.d(TAG,"dd아"+StatusCode);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<AccountItem>> call, Throwable t) {
-
-            }
-        });
-}
 
     public void getplant(){
         Log.d(TAG,"안드"+android_id);
         Log.d(TAG,"시간"+formatDate);
 
-            Call<List<AccountItem>> plantCall = mMyAPI.get_plant(""+android_id,""+formatDate);
+        Call<List<AccountItem>> plantCall = mMyAPI.get_plant(""+android_id,""+formatDate);
         plantCall.enqueue(new Callback<List<AccountItem>>() {
             @Override
             public void onResponse(Call<List<AccountItem>> call, Response<List<AccountItem>> response) {
@@ -258,50 +252,61 @@ public void getversion(){
                         second_txt += accountItem.getSecond_name();
                         second_percent_txt += "확률:"+accountItem.getSecond_percent();
                     }
+                    Intent intent = new Intent(getApplicationContext(), SearchResult.class);
 
                     final String one = first_txt;
                     final String two = second_txt;
                     Log.d(TAG,"라라"+one);
+//                    mListTv.setText(first_txt);
+//                    result1_percent.setText(first_percent_txt);
                     mListTv.setText(first_txt);
                     result1_percent.setText(first_percent_txt);
+
                     pListTv.setText(second_txt);
                     result2_percent.setText(second_percent_txt);
+
+                    intent.putExtra("frist_txt",first_txt);
+                    intent.putExtra("first_percent_txt",first_percent_txt);
+
+                    intent.putExtra("second_txt",second_txt);
+                    intent.putExtra("second_percent_txt",second_percent_txt);
+                    startActivity(intent);
 
                     first_detail_btn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
 //                            final Intent intent = new Intent(getApplicationContext(), PlantDetail.class);
 
-                    Call<List<AccountItem>> plantconCall = mMyAPI.get_plant_con(one);
-                    plantconCall.enqueue(new Callback<List<AccountItem>>() {
-                        @Override
-                        public void onResponse(Call<List<AccountItem>> call, Response<List<AccountItem>> response) {
-                            if(response.isSuccessful()){
-                                List<AccountItem> versionList =response.body();
-                                Log.d(TAG,response.body().toString());
-                                String detail_txt = "";
-                                for(AccountItem accountItem:versionList){
-                                    Log.d(TAG,"ㅅ"+one);
-                                    Log.d(TAG,"ㅎ"+accountItem.getName());
+                            Call<List<AccountItem>> plantconCall = mMyAPI.get_plant_con(one);
+                            plantconCall.enqueue(new Callback<List<AccountItem>>() {
+                                @Override
+                                public void onResponse(Call<List<AccountItem>> call, Response<List<AccountItem>> response) {
+                                    if(response.isSuccessful()){
+                                        List<AccountItem> versionList =response.body();
+                                        Log.d(TAG,response.body().toString());
+                                        String detail_txt = "";
+                                        for(AccountItem accountItem:versionList){
+                                            Log.d(TAG,"ㅅ"+one);
+                                            Log.d(TAG,"ㅎ"+accountItem.getName());
 //                                    if(one == accountItem.getName()){
-                                        detail_txt +="꽃이름: "+ accountItem.getName()+ " 꽃말: "+accountItem.getFlower()+"\n";
+                                            detail_txt +="꽃이름: "+ accountItem.getName()+ " 꽃말: "+accountItem.getFlower()+"\n";
 //                                    }
-                                }
-                                first_test.setText(detail_txt);
-                                Log.d(TAG,"실화냐"+detail_txt);
+                                        }
+                                        first_test.setText(detail_txt);
+                                        Log.d(TAG,"실화냐"+detail_txt);
 //                                intent.putExtra("detail_txt",detail_txt);
 
-                            }else{
-                                int StatusCode =response.code();
-                                Log.d(TAG,"dd아"+StatusCode);
-                            }
-                        }
+                                    }else{
+                                        int StatusCode =response.code();
+                                        Log.d(TAG,"dd아"+StatusCode);
+                                    }
+                                }
 
-                        @Override
-                        public void onFailure(Call<List<AccountItem>> call, Throwable t) {
-                            Log.d(TAG,"실패"+t.getMessage());
-                        }
-                    });
+                                @Override
+                                public void onFailure(Call<List<AccountItem>> call, Throwable t) {
+                                    Log.d(TAG,"실패"+t.getMessage());
+                                }
+                            });
 
 //                            startActivity(intent);
                         }
@@ -358,47 +363,7 @@ public void getversion(){
         });
     }
 
-    public void PostData(){
-//        content = edit1.getText().toString();
-        avg_temp = Float.parseFloat(edit1.getText().toString());
-        min_temp = Float.parseFloat(edit2.getText().toString());
-        max_temp = Float.parseFloat(edit3.getText().toString());
-        rain_fall = Float.parseFloat(edit4.getText().toString());
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-        mMyAPI = retrofit.create(MyAPI.class);
-//        AccountItem accountItem = new AccountItem(avg_temp);
-        Call<AccountItem> postCall = mMyAPI.post(avg_temp,min_temp,max_temp,rain_fall);
-        postCall.enqueue(new Callback<AccountItem>() {
-            @Override
-            public void onResponse(Call<AccountItem> call, Response<AccountItem> response) {
-                if(response.isSuccessful()){
-//                    ArrayList<List> list =new ArrayList<List>();
-                    Log.d(TAG,"등록 완료");
-//                    mListTv.setText(response.body().getJson().getVersion());
-//                    mListTv.setText(response.body().getContent());
-                    Log.i( "사진이 앨범에 저장되었습니다.3121",edit1.getText().toString());
-                }else {
-                    Log.d(TAG,"Status Code : " + response.code());
-                    Log.i( "사진이 앨범에 저장되었습니다.3121",edit1.getText().toString());
-                    Log.d(TAG,response.errorBody().toString());
-                    Log.d(TAG,call.request().body().toString());
 
-                }
-            }
-            @Override
-            public void onFailure(Call<AccountItem> call, Throwable t) {
-                Log.d(TAG,"Fail msg : " + t.getMessage());
-
-
-            }
-        });
-    }
 
     public void ImageUpdate(){
         File file = new File(imageFilePath);
