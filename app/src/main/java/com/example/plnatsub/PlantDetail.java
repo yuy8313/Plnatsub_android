@@ -20,12 +20,22 @@ public class PlantDetail extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.first_plant);
 
-        TextView detail = (TextView)findViewById(R.id.detail);
+        TextView name = (TextView)findViewById(R.id.name);
+        TextView flower_flower = (TextView)findViewById(R.id.flower_flower);
+        TextView imgUri = (TextView)findViewById(R.id.flower_img);
+        TextView flower_content = (TextView)findViewById(R.id.flower_content);
         Intent intent = getIntent();
 
-        String plant_list = intent.getExtras().getString("detail_txt");
-        detail.setText(plant_list);
+        String plant_name = intent.getExtras().getString("name_txt");
+        String plant_flower = intent.getExtras().getString("flower_txt");
+        String plant_img = intent.getExtras().getString("imgUri_txt");
+        String plant_content = intent.getExtras().getString("content_txt");
+        name.setText(plant_name);
+        flower_flower.setText(plant_flower);
+        imgUri.setText(plant_img);
+        flower_content.setText(plant_content);
         initMyAPI(BASE_URL);
+
     }
 
     public void initMyAPI(String baseUrl){

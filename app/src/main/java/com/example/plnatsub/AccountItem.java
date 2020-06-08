@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 public class AccountItem {
     String success;
     String image;
+    String content;
 
     String price;
     String date;
@@ -16,6 +17,13 @@ public class AccountItem {
 
     String name;
     String flower;
+
+    public String getContent() {
+        return content;
+    }
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     public String getName() {
         return name;

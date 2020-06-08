@@ -68,9 +68,15 @@ public class PlnatCarmer extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 672;
     private String imageFilePath;
     private Uri photoUri;
-    Button btn_cature,first_detail_btn,second_detail_btn;
+    Button btn_cature,first_detail_btn,second_detail_btn, btn_complete;
     ImageView image_result,imageViewId;
     String android_id, formatDate;
+
+    public PlnatCarmer(Context context) {
+        this.context = context;
+    }
+
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +90,8 @@ public class PlnatCarmer extends AppCompatActivity {
         result2_percent = findViewById(R.id.result2_percent);
 
         btn_cature = findViewById(R.id.btn_cature);
+        btn_complete = findViewById(R.id.btn_complete);
+
         first_detail_btn = findViewById(R.id.first_detail_btn);
         second_detail_btn = findViewById(R.id.second_detail_btn);
         image_result = findViewById(R.id.image_result);
@@ -179,6 +187,8 @@ public class PlnatCarmer extends AppCompatActivity {
 //            getaccount();
             ImageUpdate();
 
+
+
             try {
                 exif = new ExifInterface(imageFilePath);
             } catch (IOException e) {
@@ -252,7 +262,7 @@ public class PlnatCarmer extends AppCompatActivity {
                         second_txt += accountItem.getSecond_name();
                         second_percent_txt += "확률:"+accountItem.getSecond_percent();
                     }
-                    Intent intent = new Intent(getApplicationContext(), SearchResult.class);
+                    final Intent intent = new Intent(getApplicationContext(), SearchResult.class);
 
                     final String one = first_txt;
                     final String two = second_txt;
@@ -270,12 +280,22 @@ public class PlnatCarmer extends AppCompatActivity {
 
                     intent.putExtra("second_txt",second_txt);
                     intent.putExtra("second_percent_txt",second_percent_txt);
-                    startActivity(intent);
+
+                    intent.putExtra("android_id", android_id);
+                    intent.putExtra("formatDate", formatDate);
+
+                    btn_complete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            startActivity(intent);
+                        }
+                    });
+
 
                     first_detail_btn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-//                            final Intent intent = new Intent(getApplicationContext(), PlantDetail.class);
+                            final Intent intent = new Intent(getApplicationContext(), PlantDetail.class);
 
                             Call<List<AccountItem>> plantconCall = mMyAPI.get_plant_con(one);
                             plantconCall.enqueue(new Callback<List<AccountItem>>() {
@@ -284,17 +304,27 @@ public class PlnatCarmer extends AppCompatActivity {
                                     if(response.isSuccessful()){
                                         List<AccountItem> versionList =response.body();
                                         Log.d(TAG,response.body().toString());
-                                        String detail_txt = "";
+                                        String name_txt = "";
+                                        String flower_txt = "";
+                                        String imgUri_txt = "";
+                                        String content_txt = "";
                                         for(AccountItem accountItem:versionList){
                                             Log.d(TAG,"ㅅ"+one);
                                             Log.d(TAG,"ㅎ"+accountItem.getName());
-//                                    if(one == accountItem.getName()){
-                                            detail_txt +="꽃이름: "+ accountItem.getName()+ " 꽃말: "+accountItem.getFlower()+"\n";
-//                                    }
+
+                                            name_txt +=""+ accountItem.getName();
+                                            flower_txt +=" 꽃말: "+accountItem.getFlower();
+                                            imgUri_txt +=" 꽃 사진 ";
+                                            content_txt +=" 꽃 내용: "+accountItem.getContent();
+
                                         }
-                                        first_test.setText(detail_txt);
-                                        Log.d(TAG,"실화냐"+detail_txt);
-//                                intent.putExtra("detail_txt",detail_txt);
+                                        // first_test.setText(name_txt);
+                                        //Log.d(TAG,"실화냐"+name_txt);
+                                        intent.putExtra("name_txt",name_txt);
+                                        intent.putExtra("flower_txt",flower_txt);
+                                        intent.putExtra("imgUri_txt",imgUri_txt);
+                                        intent.putExtra("content_txt",content_txt);
+                                        startActivity(intent);
 
                                     }else{
                                         int StatusCode =response.code();
@@ -314,7 +344,7 @@ public class PlnatCarmer extends AppCompatActivity {
                     second_detail_btn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-//                            final Intent intent = new Intent(getApplicationContext(), PlantDetail.class);
+                            final Intent intent = new Intent(getApplicationContext(), PlantDetail.class);
 
                             Call<List<AccountItem>> plantconCall = mMyAPI.get_plant_con(two);
                             plantconCall.enqueue(new Callback<List<AccountItem>>() {
@@ -323,16 +353,25 @@ public class PlnatCarmer extends AppCompatActivity {
                                     if(response.isSuccessful()){
                                         List<AccountItem> versionList =response.body();
                                         Log.d(TAG,response.body().toString());
-                                        String detail2_txt = "";
+                                        String name_txt = "";
+                                        String flower_txt = "";
+                                        String imgUri_txt = "";
+                                        String content_txt = "";
                                         for(AccountItem accountItem:versionList){
                                             Log.d(TAG,"ㅅ"+two);
                                             Log.d(TAG,"ㅎ"+accountItem.getName());
-//                                    if(one == accountItem.getName()){
-                                            detail2_txt +="꽃이름:"+ accountItem.getName()+ "꽃말: "+accountItem.getFlower()+"\n";
-//                                    }
+//
+                                            name_txt +=""+ accountItem.getName();
+                                            flower_txt +=" 꽃말: "+accountItem.getFlower();
+                                            imgUri_txt +=" 꽃 사진 ";
+                                            content_txt +=" 꽃 내용: "+accountItem.getContent();
+//
                                         }
-                                        second_test.setText(detail2_txt);
-                                        Log.d(TAG,"실화냐"+detail2_txt);
+                                        intent.putExtra("name_txt",name_txt);
+                                        intent.putExtra("flower_txt",flower_txt);
+                                        intent.putExtra("imgUri_txt",imgUri_txt);
+                                        intent.putExtra("content_txt",content_txt);
+                                        startActivity(intent);
 //                                intent.putExtra("detail_txt",detail2_txt);
 
                                     }else{
@@ -397,17 +436,23 @@ public class PlnatCarmer extends AppCompatActivity {
 //        MultipartBody.Part multiPartBody = MultipartBody.Part
 //                .createFormData("images", file.getName(),requestBody);
 
+        Intent intent = new Intent(getApplicationContext(), Loading.class);
+        startActivity(intent); //로딩화면 출력
+
         Call<AccountItem> call = mMyAPI.upload(images,""+android_id,""+formatDate);
         call.enqueue(new Callback<AccountItem>() {
             @Override
             public void onResponse(Call<AccountItem> call, Response<AccountItem> response) {
                 Log.i("good", "good");
-                new Handler().postDelayed(new Runnable() {// 3 초 후에 실행
-                    @Override
-                    public void run() {
-                        getplant();
-                    }
-                }, 10000);
+
+//                new Handler().postDelayed(new Runnable() {// 3 초 후에 실행
+//                    @Override
+//                    public void run() {
+//
+//                    }
+//                }, 5000);
+
+                getplant();
 
             }
 
@@ -415,15 +460,22 @@ public class PlnatCarmer extends AppCompatActivity {
             public void onFailure(Call<AccountItem> call, Throwable t) {
                 Log.i(TAG,"Fail msg : " + t.getMessage());
 
-                new Handler().postDelayed(new Runnable() {// 3 초 후에 실행
-                    @Override
-                    public void run() {
-                        getplant();
-                    }
-                }, 10000);
+
+//                new Handler().postDelayed(new Runnable() {// 3 초 후에 실행
+//                    @Override
+//                    public void run() {
+//
+//                        finish();
+//                    }
+//                }, 5000);
+
+                getplant();
 
             }
+
         });
+
+
 //        call.enqueue(new Callback<AccountItem>() {
 //            @Override
 //            public void onResponse(Call<AccountItem> call, Response<ResponseBody> response) {
@@ -436,6 +488,15 @@ public class PlnatCarmer extends AppCompatActivity {
 //
 //            }
 //        });
+    }
+
+    public void startLoding(){
+        new Handler().postDelayed(new Runnable() {// 3 초 후에 실행
+            @Override
+            public void run() {
+
+            }
+        }, 10000);
     }
 
     private void initMyAPI(String baseUrl){
