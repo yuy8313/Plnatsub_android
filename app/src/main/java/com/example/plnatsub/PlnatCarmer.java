@@ -59,7 +59,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PlnatCarmer extends AppCompatActivity {
     private MyAPI mMyAPI;
-    private TextView mListTv,pListTv,first_test,second_test,result1_percent,result2_percent;
     private final  String TAG = getClass().getSimpleName();
     // server의 url을 적어준다
     private final String BASE_URL = "http://e437c9f55054.ngrok.io";
@@ -68,8 +67,8 @@ public class PlnatCarmer extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 672;
     private String imageFilePath;
     private Uri photoUri;
-    Button btn_cature,first_detail_btn,second_detail_btn, btn_complete;
-    ImageView image_result,imageViewId;
+    Button btn_cature, btn_complete;
+    ImageView image_result;
     String android_id, formatDate;
 
 
@@ -78,20 +77,11 @@ public class PlnatCarmer extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_carmer);
-        mListTv = findViewById(R.id.result1);
-        pListTv = findViewById(R.id.result2);
-        first_test = findViewById(R.id.first_test);
-        second_test = findViewById(R.id.second_test);
-        result1_percent = findViewById(R.id.result1_percent);
-        result2_percent = findViewById(R.id.result2_percent);
 
-        btn_cature = findViewById(R.id.btn_cature);
-        btn_complete = findViewById(R.id.btn_complete);
+        btn_cature = findViewById(R.id.btn_cature); //재촬영 선언
+        btn_complete = findViewById(R.id.btn_complete); //완료버튼 선언
+        image_result = findViewById(R.id.image_result); // 이미지뷰 선언
 
-        first_detail_btn = findViewById(R.id.first_detail_btn);
-        second_detail_btn = findViewById(R.id.second_detail_btn);
-        image_result = findViewById(R.id.image_result);
-        imageViewId = findViewById(R.id.imageViewId);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (intent.resolveActivity(getPackageManager()) != null) {
             File photoFile = null;
@@ -108,48 +98,46 @@ public class PlnatCarmer extends AppCompatActivity {
             } catch (IOException e) {
 
             }
-
             if (photoFile != null) {
                 photoUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName(), photoFile);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-
-
             }
         }
 
         initMyAPI(BASE_URL);
-//        btn_cature.setOnClickListener(new View.OnClickListener() {   //촬영
-//            @Override
-//            public void onClick(View v) {
-////                getplant();
-//                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                if (intent.resolveActivity(getPackageManager()) != null) {
-//                    File photoFile = null;
-//                    long now = System.currentTimeMillis();
-//                    Date date = new Date(now);
-//                    SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy.MM.ddHH.mm.ss");
-//                    formatDate = sdfNow.format(date);
-//
-//                    android_id = android.provider.Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-//
-//                    try {
-//                        photoFile = createImageFile();
-//
-//                    } catch (IOException e) {
-//
-//                    }
-//
-//                    if (photoFile != null) {
-//                        photoUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName(), photoFile);
-//                        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-//                        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-//
-//
-//                    }
-//                }
-//            }
-//        });
+
+        btn_cature.setOnClickListener(new View.OnClickListener() {   //재촬영
+            @Override
+            public void onClick(View v) {
+//                getplant();
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    File photoFile = null;
+                    long now = System.currentTimeMillis();
+                    Date date = new Date(now);
+                    SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy.MM.ddHH.mm.ss");
+                    formatDate = sdfNow.format(date);
+
+                    android_id = android.provider.Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+
+                    try {
+                        photoFile = createImageFile();
+
+                    } catch (IOException e) {
+
+                    }
+
+                    if (photoFile != null) {
+                        photoUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName(), photoFile);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+
+
+                    }
+                }
+            }
+        });
 
     }
 
@@ -182,7 +170,6 @@ public class PlnatCarmer extends AppCompatActivity {
 //            getversion();
 //            getaccount();
             ImageUpdate();
-
 
 
             try {
@@ -265,11 +252,6 @@ public class PlnatCarmer extends AppCompatActivity {
                     Log.d(TAG,"라라"+one);
 //                    mListTv.setText(first_txt);
 //                    result1_percent.setText(first_percent_txt);
-                    mListTv.setText(first_txt);
-                    result1_percent.setText(first_percent_txt);
-
-                    pListTv.setText(second_txt);
-                    result2_percent.setText(second_percent_txt);
 
                     intent.putExtra("frist_txt",first_txt);
                     intent.putExtra("first_percent_txt",first_percent_txt);
@@ -287,104 +269,6 @@ public class PlnatCarmer extends AppCompatActivity {
                         }
                     });
 
-
-                    first_detail_btn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            final Intent intent = new Intent(getApplicationContext(), PlantDetail.class);
-
-                            Call<List<AccountItem>> plantconCall = mMyAPI.get_plant_con(one);
-                            plantconCall.enqueue(new Callback<List<AccountItem>>() {
-                                @Override
-                                public void onResponse(Call<List<AccountItem>> call, Response<List<AccountItem>> response) {
-                                    if(response.isSuccessful()){
-                                        List<AccountItem> versionList =response.body();
-                                        Log.d(TAG,response.body().toString());
-                                        String name_txt = "";
-                                        String flower_txt = "";
-                                        String imgUri_txt = "";
-                                        String content_txt = "";
-                                        for(AccountItem accountItem:versionList){
-                                            Log.d(TAG,"ㅅ"+one);
-                                            Log.d(TAG,"ㅎ"+accountItem.getName());
-
-                                            name_txt +=""+ accountItem.getName();
-                                            flower_txt +=" 꽃말: "+accountItem.getFlower();
-                                            imgUri_txt +=" 꽃 사진 ";
-                                            content_txt +=" 꽃 내용: "+accountItem.getContent();
-
-                                        }
-                                        // first_test.setText(name_txt);
-                                        //Log.d(TAG,"실화냐"+name_txt);
-                                        intent.putExtra("name_txt",name_txt);
-                                        intent.putExtra("flower_txt",flower_txt);
-                                        intent.putExtra("imgUri_txt",imgUri_txt);
-                                        intent.putExtra("content_txt",content_txt);
-                                        startActivity(intent);
-
-                                    }else{
-                                        int StatusCode =response.code();
-                                        Log.d(TAG,"dd아"+StatusCode);
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<List<AccountItem>> call, Throwable t) {
-                                    Log.d(TAG,"실패"+t.getMessage());
-                                }
-                            });
-
-//                            startActivity(intent);
-                        }
-                    });
-                    second_detail_btn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            final Intent intent = new Intent(getApplicationContext(), PlantDetail.class);
-
-                            Call<List<AccountItem>> plantconCall = mMyAPI.get_plant_con(two);
-                            plantconCall.enqueue(new Callback<List<AccountItem>>() {
-                                @Override
-                                public void onResponse(Call<List<AccountItem>> call, Response<List<AccountItem>> response) {
-                                    if(response.isSuccessful()){
-                                        List<AccountItem> versionList =response.body();
-                                        Log.d(TAG,response.body().toString());
-                                        String name_txt = "";
-                                        String flower_txt = "";
-                                        String imgUri_txt = "";
-                                        String content_txt = "";
-                                        for(AccountItem accountItem:versionList){
-                                            Log.d(TAG,"ㅅ"+two);
-                                            Log.d(TAG,"ㅎ"+accountItem.getName());
-//
-                                            name_txt +=""+ accountItem.getName();
-                                            flower_txt +=" 꽃말: "+accountItem.getFlower();
-                                            imgUri_txt +=" 꽃 사진 ";
-                                            content_txt +=" 꽃 내용: "+accountItem.getContent();
-//
-                                        }
-                                        intent.putExtra("name_txt",name_txt);
-                                        intent.putExtra("flower_txt",flower_txt);
-                                        intent.putExtra("imgUri_txt",imgUri_txt);
-                                        intent.putExtra("content_txt",content_txt);
-                                        startActivity(intent);
-//                                intent.putExtra("detail_txt",detail2_txt);
-
-                                    }else{
-                                        int StatusCode =response.code();
-                                        Log.d(TAG,"dd아"+StatusCode);
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<List<AccountItem>> call, Throwable t) {
-
-                                }
-                            });
-
-//                            startActivity(intent);
-                        }
-                    });
                 }else{
                     int StatusCode =response.code();
                     Log.d(TAG,"dd아"+StatusCode);
@@ -392,9 +276,8 @@ public class PlnatCarmer extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<AccountItem>> call, Throwable t) {
+            public void onFailure(Call<List<AccountItem>> call, Throwable t) {}
 
-            }
         });
     }
 
@@ -441,13 +324,6 @@ public class PlnatCarmer extends AppCompatActivity {
             public void onResponse(Call<AccountItem> call, Response<AccountItem> response) {
                 Log.i("good", "good");
 
-//                new Handler().postDelayed(new Runnable() {// 3 초 후에 실행
-//                    @Override
-//                    public void run() {
-//
-//                    }
-//                }, 5000);
-
                 getplant();
 
             }
@@ -455,15 +331,6 @@ public class PlnatCarmer extends AppCompatActivity {
             @Override
             public void onFailure(Call<AccountItem> call, Throwable t) {
                 Log.i(TAG,"Fail msg : " + t.getMessage());
-
-
-//                new Handler().postDelayed(new Runnable() {// 3 초 후에 실행
-//                    @Override
-//                    public void run() {
-//
-//                        finish();
-//                    }
-//                }, 5000);
 
                 getplant();
 
@@ -484,15 +351,6 @@ public class PlnatCarmer extends AppCompatActivity {
 //
 //            }
 //        });
-    }
-
-    public void startLoding(){
-        new Handler().postDelayed(new Runnable() {// 3 초 후에 실행
-            @Override
-            public void run() {
-
-            }
-        }, 10000);
     }
 
     private void initMyAPI(String baseUrl){
