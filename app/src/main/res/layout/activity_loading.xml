@@ -16,5 +16,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text=""/>
+        android:text="로딩이 될때 까지 기다려 주세요..."
+        android:textSize="28dp"/>
 </LinearLayout>

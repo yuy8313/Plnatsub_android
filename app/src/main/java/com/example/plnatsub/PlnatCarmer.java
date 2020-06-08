@@ -72,11 +72,7 @@ public class PlnatCarmer extends AppCompatActivity {
     ImageView image_result,imageViewId;
     String android_id, formatDate;
 
-    public PlnatCarmer(Context context) {
-        this.context = context;
-    }
 
-    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +119,7 @@ public class PlnatCarmer extends AppCompatActivity {
         }
 
         initMyAPI(BASE_URL);
-//        btn_cature.setOnClickListener(new View.OnClickListener() {
+//        btn_cature.setOnClickListener(new View.OnClickListener() {   //촬영
 //            @Override
 //            public void onClick(View v) {
 ////                getplant();
