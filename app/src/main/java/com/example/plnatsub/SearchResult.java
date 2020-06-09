@@ -7,7 +7,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -24,8 +27,9 @@ public class SearchResult extends AppCompatActivity {
 
     private final  String TAG = getClass().getSimpleName();
 
-    private final String BASE_URL = "http://e437c9f55054.ngrok.io";
+    private final String BASE_URL = "http://fc841842624b.ngrok.io"; //url주소
     Button first_detail_btn,second_detail_btn;
+    ImageView flower_img1, flower_img2, flower_img3;
     private String android_id;
     private String formatDate;
 
@@ -35,6 +39,10 @@ public class SearchResult extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_result);
+
+        flower_img1 = (ImageView) findViewById(R.id.flower_img1);
+        flower_img2 = (ImageView) findViewById(R.id.flower_img2);
+        //flower_img3 = (ImageView) findViewById(R.id.flower_img3);
 
         result1 = (TextView)findViewById(R.id.result1);
         result1_percent = (TextView)findViewById(R.id.result1_percent);
@@ -57,6 +65,14 @@ public class SearchResult extends AppCompatActivity {
         String plant_percent_list2 = intent.getExtras().getString("second_percent_txt");
         result2_percent.setText(plant_percent_list2);
 
+
+
+        String first_img_txt = intent.getExtras().getString("first_img_txt");
+        String second_img_txt = intent.getExtras().getString("second_img_txt");
+
+        Picasso.get().load(first_img_txt).into(flower_img1);
+        Picasso.get().load(second_img_txt).into(flower_img2);
+
         final String one = plant_name_list1; // 첫번째 버튼에 해당
         final String two = plant_name_list2; // 두번째 버튼에 해당
 
@@ -74,24 +90,26 @@ public class SearchResult extends AppCompatActivity {
                             Log.d(TAG,response.body().toString());
                             String name_txt = "";
                             String flower_txt = "";
-                            String imgUri_txt = "";
                             String content_txt = "";
+                            String img_txt = "";
+
                             for(AccountItem accountItem:versionList){
                                 Log.d(TAG,"ㅅ"+one);
                                 Log.d(TAG,"ㅎ"+accountItem.getName());
 
                                 name_txt +=""+ accountItem.getName();
                                 flower_txt +=" 꽃말: "+accountItem.getFlower();
-                                imgUri_txt +=" 꽃 사진 ";
                                 content_txt +=" 꽃 내용: "+accountItem.getContent();
+                                img_txt ="http://fc841842624b.ngrok.io"+accountItem.getImage();  //url주소
 
                             }
-                            // first_test.setText(name_txt);
-                            //Log.d(TAG,"실화냐"+name_txt);
+
+
                             intent.putExtra("name_txt",name_txt);
                             intent.putExtra("flower_txt",flower_txt);
-                            intent.putExtra("imgUri_txt",imgUri_txt);
                             intent.putExtra("content_txt",content_txt);
+                            intent.putExtra("img_txt",img_txt);
+
                             startActivity(intent);
 
                         }else{
@@ -123,7 +141,7 @@ public class SearchResult extends AppCompatActivity {
                             Log.d(TAG,response.body().toString());
                             String name_txt = "";
                             String flower_txt = "";
-                            String imgUri_txt = "";
+                            String img_txt = "";
                             String content_txt = "";
                             for(AccountItem accountItem:versionList){
                                 Log.d(TAG,"ㅅ"+two);
@@ -131,13 +149,13 @@ public class SearchResult extends AppCompatActivity {
 //
                                 name_txt +=""+ accountItem.getName();
                                 flower_txt +=" 꽃말: "+accountItem.getFlower();
-                                imgUri_txt +=" 꽃 사진 ";
+                                img_txt ="http://fc841842624b.ngrok.io"+accountItem.getImage();   //url주소
                                 content_txt +=" 꽃 내용: "+accountItem.getContent();
 //
                             }
                             intent.putExtra("name_txt",name_txt);
                             intent.putExtra("flower_txt",flower_txt);
-                            intent.putExtra("imgUri_txt",imgUri_txt);
+                            intent.putExtra("img_txt",img_txt);
                             intent.putExtra("content_txt",content_txt);
                             startActivity(intent);
 //                                intent.putExtra("detail_txt",detail2_txt);

@@ -30,6 +30,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -61,7 +62,7 @@ public class PlnatCarmer extends AppCompatActivity {
     private MyAPI mMyAPI;
     private final  String TAG = getClass().getSimpleName();
     // server의 url을 적어준다
-    private final String BASE_URL = "http://e437c9f55054.ngrok.io";
+    private final String BASE_URL = "http://fc841842624b.ngrok.io";  //url주소
     //    private final String BASE_URL = "http://127.0.0.1:5000/";
     Boolean album = false;
     private static final int REQUEST_IMAGE_CAPTURE = 672;
@@ -239,20 +240,53 @@ public class PlnatCarmer extends AppCompatActivity {
                     String first_percent_txt = "";
                     String second_txt = "";
                     String second_percent_txt = "";
+                    final String first_img = "";
+                    String second_img = "";
                     for(AccountItem accountItem:versionList){
                         first_txt += accountItem.getFirst_name();
                         first_percent_txt += "확률: "+accountItem.getFirst_percent();
                         second_txt += accountItem.getSecond_name();
                         second_percent_txt += "확률:"+accountItem.getSecond_percent();
-                    }
-                    final Intent intent = new Intent(getApplicationContext(), SearchResult.class);
 
+
+                    }
                     final String one = first_txt;
                     final String two = second_txt;
+
+//                    Call<List<AccountItem>> plantconCall = mMyAPI.get_plant_con(one);
+//                    plantconCall.enqueue(new Callback<List<AccountItem>>() {
+//                        @Override
+//                        public void onResponse(Call<List<AccountItem>> call, Response<List<AccountItem>> response) {
+//                            if (response.isSuccessful()) {
+//                                List<AccountItem> versionList =response.body();
+//                                String img_txt = "";
+//
+//                                for(AccountItem accountItem:versionList){
+//                                    Log.d(TAG,"ㅅ"+one);
+//                                    Log.d(TAG,"ㅎ"+accountItem.getName());
+//
+//                                    img_txt ="http://fc841842624b.ngrok.io"+accountItem.getImage();  //url주소
+//
+//                                }
+//                                Picasso.get().load(img_txt).into();
+//                            } else {
+//                                int StatusCode = response.code();
+//                                Log.d(TAG, "dd아" + StatusCode);
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onFailure(Call<List<AccountItem>> call, Throwable t) {
+//                            Log.d(TAG, "실패" + t.getMessage());
+//                        }
+//
+//                    });
+
+                    final Intent intent = new Intent(getApplicationContext(), SearchResult.class);
+
                     Log.d(TAG,"라라"+one);
 //                    mListTv.setText(first_txt);
 //                    result1_percent.setText(first_percent_txt);
-
                     intent.putExtra("frist_txt",first_txt);
                     intent.putExtra("first_percent_txt",first_percent_txt);
 
@@ -262,10 +296,74 @@ public class PlnatCarmer extends AppCompatActivity {
                     intent.putExtra("android_id", android_id);
                     intent.putExtra("formatDate", formatDate);
 
+                    //intent.putExtra("first_img", );
+
                     btn_complete.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            startActivity(intent);
+                            Call<List<AccountItem>> plantconCall = mMyAPI.get_plant_con(one);
+                            plantconCall.enqueue(new Callback<List<AccountItem>>() {
+                                @Override
+                                public void onResponse(Call<List<AccountItem>> call, Response<List<AccountItem>> response) {
+                                    if (response.isSuccessful()) {
+                                        List<AccountItem> versionList =response.body();
+                                        String first_img_txt = "";
+
+                                        for(AccountItem accountItem:versionList){
+                                            Log.d(TAG,"ㅅ"+one);
+                                            Log.d(TAG,"ㅎ"+accountItem.getName());
+
+                                            first_img_txt ="http://fc841842624b.ngrok.io"+accountItem.getImage();  //url주소
+
+                                        }
+                                        intent.putExtra("first_img_txt",first_img_txt);
+
+                                        startActivity(intent);
+                                    } else {
+                                        int StatusCode = response.code();
+                                        Log.d(TAG, "dd아" + StatusCode);
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<List<AccountItem>> call, Throwable t) {
+                                    Log.d(TAG, "실패" + t.getMessage());
+                                }
+
+                            });
+
+                            Call<List<AccountItem>> plantconCall1 = mMyAPI.get_plant_con(two);
+                            plantconCall1.enqueue(new Callback<List<AccountItem>>() {
+                                @Override
+                                public void onResponse(Call<List<AccountItem>> call, Response<List<AccountItem>> response) {
+                                    if (response.isSuccessful()) {
+                                        List<AccountItem> versionList =response.body();
+                                        String second_img_txt = "";
+
+                                        for(AccountItem accountItem:versionList){
+                                            Log.d(TAG,"ㅅ"+two);
+                                            Log.d(TAG,"ㅎ"+accountItem.getName());
+
+                                            second_img_txt ="http://fc841842624b.ngrok.io"+accountItem.getImage();  //url주소
+
+                                        }
+                                        intent.putExtra("second_img_txt",second_img_txt);
+
+                                        //startActivity(intent);
+                                    } else {
+                                        int StatusCode = response.code();
+                                        Log.d(TAG, "dd아" + StatusCode);
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<List<AccountItem>> call, Throwable t) {
+                                    Log.d(TAG, "실패" + t.getMessage());
+                                }
+
+                            });
+
+                            //startActivity(intent);
                         }
                     });
 

@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     String mCurrentPhotoPath;
     String formatDate, android_id;
     // server의 url을 적어준다
-    private final String BASE_URL = "http://e437c9f55054.ngrok.io";
+    private final String BASE_URL = "http://fc841842624b.ngrok.io";  //url주소
 //    private final String BASE_URL = "http://127.0.0.1:5000/";
 
     @Override

@@ -17,7 +17,7 @@
         android:background="@android:color/white">
 
         <ImageView
-            android:id="@+id/iv_thumbnail1"
+            android:id="@+id/flower_img1"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:src="@mipmap/ic_launcher"/>
@@ -72,7 +72,7 @@
         android:background="@android:color/white">
 
         <ImageView
-            android:id="@+id/iv_thumbnail2"
+            android:id="@+id/flower_img2"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:src="@mipmap/ic_launcher"/>
@@ -119,59 +119,60 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:padding="8dp"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="8dp"
-        android:background="@android:color/white">
+<!--    <LinearLayout-->
+<!--        android:orientation="horizontal"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="200dp"-->
+<!--        android:padding="8dp"-->
+<!--        android:gravity="center_vertical"-->
+<!--        android:layout_marginBottom="8dp"-->
+<!--        android:background="@android:color/white">-->
 
-        <ImageView
-            android:id="@+id/iv_thumbnail3"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:src="@mipmap/ic_launcher"/>
+<!--        <ImageView-->
+<!--            android:id="@+id/flower_img3"-->
+<!--            android:layout_width="150dp"-->
+<!--            android:layout_height="150dp"-->
+<!--            android:src="@mipmap/ic_launcher"/>-->
 
-        <LinearLayout
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:orientation="vertical">
+<!--        <LinearLayout-->
+<!--            android:layout_width="150dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginLeft="15dp"-->
+<!--            android:orientation="vertical">-->
 
-            <TextView
-                android:id="@+id/result3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:includeFontPadding="false"
-                android:text="TITLE"
-                android:textSize="45sp"
-                android:textColor="@android:color/black"
-                android:textStyle="bold"/>
+<!--            <TextView-->
+<!--                android:id="@+id/result3"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:includeFontPadding="false"-->
+<!--                android:text="TITLE"-->
+<!--                android:textSize="45sp"-->
+<!--                android:textColor="@android:color/black"-->
+<!--                android:textStyle="bold"/>-->
 
-            <TextView
-                android:id="@+id/result3_percent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:includeFontPadding="false"
-                android:text="content"
-                android:textSize="35sp"
-                android:textColor="@android:color/black"/>
+<!--            <TextView-->
+<!--                android:id="@+id/result3_percent"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:includeFontPadding="false"-->
+<!--                android:text="content"-->
+<!--                android:textSize="35sp"-->
+<!--                android:textColor="@android:color/black"/>-->
 
 
-        </LinearLayout>
+<!--        </LinearLayout>-->
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+<!--        <View-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:layout_weight="1"/>-->
 
-        <Button
-            android:id="@+id/third_detail_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="정보보기"/>
+<!--        <Button-->
+<!--            android:id="@+id/third_detail_btn"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="정보보기"/>-->
 
-    </LinearLayout>
+<!--    </LinearLayout>-->
+
 </LinearLayout>
